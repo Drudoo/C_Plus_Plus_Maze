@@ -23,13 +23,17 @@
 //
 //
 
+#include "main.h"
 #include <iostream>
+#include <ctime>
+
 using namespace std;
 
 void generateMaze();
 void getPlayerInput();
 void updateMaze();
-
+void updateMazeWithoutEnemies();
+void solveMaze();
 
 struct gameUser {
     int health = 10;
@@ -56,30 +60,58 @@ struct enemyThree {
     int attack = 3;
 };
 
+int posX;
+int posY;
+int exitPosX;
+int exitPosY;
+int prevX;
+int prevY;
+int enemy1PosX;
+int enemy1PosY;
+int enemy2PosX;
+int enemy2PosY;
+int enemy3PosX;
+int enemy3PosY;
+
+const char HEIGHT = 10, WIDTH = 10;
+const char player = 'X';
+const char endExit = 'E';
+//char maze[10][10];
+unsigned char maze[WIDTH][HEIGHT] = {
+    '#','#','#','#','#','#','#','#','#','#',
+    '#',' ','#','#','#','#','#','#','#','#',
+    '#',' ',' ',' ','#',' ',' ',' ','#','#',
+    '#','#','#',' ','#',' ','#',' ','#','#',
+    '#','#','#',' ','#',' ','#',' ','#','#',
+    '#',' ',' ',' ',' ',' ','#',' ','E','#',
+    '#',' ','#',' ','#',' ','#','#','#','#',
+    '#','#','#',' ','#',' ','#','#','#','#',
+    '#',' ',' ',' ','#',' ',' ',' ','#','#',
+    '#','#','#','#','#','#','#','#','#','#'
+};
+
+
+
 int main () {
-    
     
     char newGameChoice, solverChoice;
     bool gameOver(false), firstGame(true);
-    int posX = 0;
-    int posY = 0;
     
+    srand((unsigned)time(NULL));
     
-    const char HEIGHT = 10, WIDTH = 10;
-    const char player = 'X';
-    //char maze[10][10];
-    unsigned char maze[WIDTH][HEIGHT] = {
-        ' ','#','#','#','#','#','#','#','#','#',
-        ' ',' ','#',' ','#','#','#','#','#','#',
-        '#',' ',' ',' ','#',' ',' ',' ','#','#',
-        '#','#','#',' ','#',' ','#',' ','#','#',
-        '#','#','#',' ','#',' ','#',' ','#','#',
-        '#',' ',' ',' ',' ',' ','#',' ',' ',' ',
-        '#',' ','#',' ','#','#','#','#','#',' ',
-        '#','#','#',' ','#',' ','#','#','#',' ',
-        '#',' ',' ',' ','#',' ',' ',' ','#',' ',
-        '#','#','#','#','#','#','#','#','#','E'
-    };
+    ::posX = 1;
+    ::posY = 1;
+    ::exitPosX = 5;
+    ::exitPosY = 8;
+    
+    ::enemy1PosX = 8;
+    ::enemy1PosY = 5;
+    
+    ::enemy2PosX = 5;
+    ::enemy2PosY = 3;
+    
+    ::enemy3PosX = 4;
+    ::enemy3PosY = 7;
     
     do {
                
@@ -99,40 +131,44 @@ int main () {
         cout << "y or n" << endl;
         cin >> solverChoice;
         
+        
         if (solverChoice == 'y') {
-            //RUN SOLVE ALGORITHM
+           
             
+            while (1) {
+                sleep(1);
+
+                updateMazeWithoutEnemies();
+                solveMaze();
+
+                if (maze[posX][posY]=='E') {
+                    cout << "\n\nMAZE SOLVED!\n\n";
+                    break;
+                }
+            }
             
-//            cout << "GAME HAS BEEN PLAYED YOU ARE DEAD" << endl;
-//            gameOver = true;
-//            firstGame = false;
+            gameOver = true;
+            firstGame = false;
             
         } else {
-            do {
+            
+            updateMaze();
 
-                
-                
-                for (int y=0; y<HEIGHT; y++) {
-                    cout << endl;
-                    for (int x=0; x<WIDTH; x++) {
-                        cout << maze[x][y];
-                    }
-                }
-                
-                
-                maze[posX][posY] = player;
-                
-                
+            while (1) {
                 getPlayerInput();
                 updateMaze();
                 
-            } while (maze[posX][posY] !='E');
+                if (maze[posX][posY]=='E') {
+                    break;
+                }
+
+            }
             
-//            cout << "GAME HAS BEEN PLAYED YOU ARE DEAD" << endl;
-//            gameOver = true;
-//            firstGame = false;
-            
-            
+                cout << "\nYOU WON!\n" << endl;
+                gameOver = true;
+                firstGame = false;
+
+        
             /*
              
              1) Start at a random cell in the grid.
@@ -151,36 +187,11 @@ int main () {
     return 0;
 }
 
-//void generateMaze() {
-//    
-//    const char HEIGHT = 10, WIDTH = 10;
-//    const char player = 'X';
-//    //char maze[10][10];
-//    unsigned char maze[WIDTH][HEIGHT] = {
-//        ' ','#','#','#','#','#','#','#','#','#',
-//        ' ',' ','#',' ','#','#','#','#','#','#',
-//        '#',' ',' ',' ','#',' ',' ',' ','#','#',
-//        '#','#','#',' ','#',' ','#',' ','#','#',
-//        '#','#','#',' ','#',' ','#',' ','#','#',
-//        '#',' ',' ',' ',' ',' ','#',' ',' ',' ',
-//        '#',' ','#',' ','#','#','#','#','#',' ',
-//        '#','#','#',' ','#',' ','#','#','#',' ',
-//        '#',' ',' ',' ','#',' ',' ',' ','#',' ',
-//        '#','#','#','#','#','#','#','#','#','E'
-//    };
-//    for (int y=0; y<HEIGHT; y++) {
-//        cout << endl;
-//        for (int x=0; x<WIDTH; x++) {
-//            cout << maze[x][y];
-//        }
-//    }
-//    
-//    int posX = 0;
-//    int posY = 0;
-//    maze[posX][posY] = player;
-//    cout << player;
-//    
-//}
+
+void generateMaze() {
+    
+}
+
 
 void getPlayerInput() {
     
@@ -190,19 +201,39 @@ void getPlayerInput() {
     switch (keyPress) {
         case 'a':
             //move left
-            cout << keyPress;
+            if (maze[posX-1][posY] == '#') {
+                cout << "ERROR!";
+            } else {
+                posX = posX -1;
+            }
+            cout << "\n" << posX << " , " << posY << "\n";
             break;
         case 'd':
             //move right
-            cout << keyPress;
+            if (maze[posX+1][posY] == '#') {
+                cout << "ERROR!";
+            } else {
+                posX = posX +1;
+            }
+            cout << "\n" << posX << " , " << posY << "\n";
             break;
         case 'w':
             //move up
-            cout << keyPress;
+            if (maze[posX][posY-1] == '#') {
+                cout << "ERROR!";
+            } else {
+                posY = posY -1;
+            }
+            cout << "\n" << posX << " , " << posY << "\n";
             break;
         case 's':
             //move down
-            cout << keyPress;
+            if (maze[posX][posY+1] == '#') {
+                cout << "ERROR!";
+            } else {
+                posY = posY +1;
+            }
+            cout << "\n" << posX << " , " << posY << "\n";
             break;
             
         default:
@@ -213,7 +244,82 @@ void getPlayerInput() {
 }
 
 void updateMaze() {
+    unsigned char maze[WIDTH][HEIGHT] = {
+        '#','#','#','#','#','#','#','#','#','#',
+        '#',' ','#','#','#','#','#','#','#','#',
+        '#',' ',' ',' ','#',' ',' ',' ','#','#',
+        '#','#','#',' ','#',' ','#',' ','#','#',
+        '#','#','#',' ','#',' ','#',' ','#','#',
+        '#',' ',' ',' ',' ',' ','#',' ','E','#',
+        '#',' ','#',' ','#',' ','#','#','#','#',
+        '#','#','#',' ','#',' ','#','#','#','#',
+        '#',' ',' ',' ','#',' ',' ',' ','#','#',
+        '#','#','#','#','#','#','#','#','#','#'
+    };
     
+    maze[enemy1PosX][enemy1PosY] = '@';
+    maze[enemy2PosX][enemy2PosY] = '%';
+    maze[enemy3PosX][enemy3PosY] = '$';
+    maze[posX][posY] = player;
+    maze[exitPosX][exitPosY] = endExit;
+
     
+    for (int y=0; y<HEIGHT; y++) {
+        cout << endl;
+        for (int x=0; x<WIDTH; x++) {
+            cout << maze[x][y];
+        }
+    }
+
 }
 
+void updateMazeWithoutEnemies() {
+    unsigned char maze[WIDTH][HEIGHT] = {
+        '#','#','#','#','#','#','#','#','#','#',
+        '#',' ','#','#','#','#','#','#','#','#',
+        '#',' ',' ',' ','#',' ',' ',' ','#','#',
+        '#','#','#',' ','#',' ','#',' ','#','#',
+        '#','#','#',' ','#',' ','#',' ','#','#',
+        '#',' ',' ',' ',' ',' ','#',' ','E','#',
+        '#',' ','#',' ','#',' ','#','#','#','#',
+        '#','#','#',' ','#',' ','#','#','#','#',
+        '#',' ',' ',' ','#',' ',' ',' ','#','#',
+        '#','#','#','#','#','#','#','#','#','#'
+    };
+    
+    maze[exitPosX][exitPosY] = endExit;
+    maze[posX][posY] = player;
+
+    
+    for (int y=0; y<HEIGHT; y++) {
+        cout << endl;
+        for (int x=0; x<WIDTH; x++) {
+            cout << maze[x][y];
+        }
+    }
+}
+
+
+void solveMaze() {
+    maze[posX][posY] = '.';
+    
+    if ((maze[posX-1][posY] != '#') && (maze[posX-1][posY] != '.')) {
+        posX = posX -1;
+    }
+
+    else if ((maze[posX][posY+1] != '#') && (maze[posX][posY+1] != '.')) {
+        posY = posY +1;
+    }
+    
+    else if ((maze[posX+1][posY] != '#') && (maze[posX+1][posY] != '.')) {
+        posX = posX +1;
+        
+    }
+    
+    else if ((maze[posX][posY-1] != '#') && (maze[posX][posY-1] != '.')) {
+        posY = posY -1;
+    }
+    
+    cout << "\n" << posX << " , " << posY << "\n";
+
+}
