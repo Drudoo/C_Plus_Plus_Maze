@@ -29,5 +29,16 @@ extern int enemy3PosY;
 extern int prevX;
 extern int prevY;
 
+extern int tokens;
+
+
+extern bool goblinDead;
+extern bool caveTrollDead;
+extern bool orcDead;
+
+extern bool gameOver;
+extern bool firstGame;
+
+extern bool playerDead;
 
 #endif
